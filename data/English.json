@@ -1,0 +1,24 @@
+{
+  "admission-process": [
+    {
+      "question": "How can I apply to Davinci?",
+      "answer": "You can apply online through our official website or visit our campus for offline applications."
+    },
+    {
+      "question": "What documents are needed for admission?",
+      "answer": "You need to submit your previous academic records, ID proof, and passport-size photographs."
+    }
+  ],
+  "Why Davinci": [
+    {
+      "question": "Why should I choose Davinci?",
+      "answer": "Davinci offers industry-oriented programs with top-notch faculty and infrastructure."
+    }
+  ],
+  "Fee": [
+    {
+      "question": "What is the fee structure?",
+      "answer": "The fee varies depending on the course. Please refer to the official website for detailed information."
+    }
+  ]
+}
