@@ -1,1 +1,77 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Davinci Info</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .section-btn { margin: 5px; padding: 10px 15px; cursor: pointer; background: #f0f0f0; border: none; border-radius: 5px; }
+    .qa { margin-top: 15px; }
+    .qa h4 { margin-bottom: 5px; }
+    .qa p { margin-top: 0; }
+  </style>
+</head>
+<body>
+
+  <h2>Select Language</h2>
+  <select id="languageSelect">
+    <option value="">-- Choose Language --</option>
+    <option value="English">ENGLISH</option>
+    <option value="Tamil">TAMIL</option>
+    <option value="Kannada">KANNADA</option>
+    <option value="Hindi">HINDI</option>
+  </select>
+
+  <div id="sectionButtons" style="margin-top: 20px;"></div>
+  <div id="qaList" class="qa"></div>
+
+  <script>
+    const languageSelect = document.getElementById("languageSelect");
+    const sectionButtons = document.getElementById("sectionButtons");
+    const qaList = document.getElementById("qaList");
+
+    let currentData = {};
+
+    languageSelect.addEventListener("change", async () => {
+      const lang = languageSelect.value;
+      sectionButtons.innerHTML = '';
+      qaList.innerHTML = '';
+
+      if (lang) {
+        try {
+          const response = await fetch(`data/${lang}.json`);
+          currentData = await response.json();
+
+          Object.keys(currentData).forEach(section => {
+            const btn = document.createElement("button");
+            btn.textContent = section.replace(/-/g, " ");
+            btn.className = "section-btn";
+            btn.onclick = () => renderQA(currentData[section]);
+            sectionButtons.appendChild(btn);
+          });
+        } catch (error) {
+          qaList.innerHTML = "<p>Error loading data.</p>";
+        }
+      }
+    });
+
+    function renderQA(qaArray) {
+      qaList.innerHTML = "";
+      if (!qaArray || qaArray.length === 0) {
+        qaList.innerHTML = "<p>No questions available.</p>";
+        return;
+      }
+      qaArray.forEach(item => {
+        const q = document.createElement("h4");
+        q.textContent = "Q: " + item.question;
+        const a = document.createElement("p");
+        a.textContent = "A: " + item.answer;
+        qaList.appendChild(q);
+        qaList.appendChild(a);
+      });
+    }
+  </script>
+
+</body>
+</html>
