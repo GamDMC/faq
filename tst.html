@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Davinci FAQ</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background: #f9f9f9;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      max-width: 500px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    select, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .section-btn {
+      background: #eee;
+      cursor: pointer;
+    }
+    .section-btn:hover {
+      background: #ddd;
+    }
+    .qa {
+      margin-top: 20px;
+    }
+    .qa h4 {
+      margin: 10px 0 5px;
+    }
+    .qa p {
+      margin: 0 0 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Select Language</h2>
+    <select id="languageSelect">
+      <option value="">-- Choose Language --</option>
+    </select>
+
+    <div id="sectionButtons"></div>
+    <div id="qaList" class="qa"></div>
+  </div>
+
+  <script>
+    const sheetID = "11kmZKdU83T8UoLqNjR5KB8HQAOFV_zRMRxX2aO5KaLc"; // Replace with your actual Sheet ID
+    const sheetName = "Sheet1"; // Change if your sheet has a different name
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+    const languageSelect = document.getElementById("languageSelect");
+    const sectionButtons = document.getElementById("sectionButtons");
+    const qaList = document.getElementById("qaList");
+
+    let allData = {};
+
+    // Fetch Google Sheet and convert to structured JSON
+    fetch(sheetURL)
+      .then(res => res.text())
+      .then(text => {
+        const json = JSON.parse(text.substring(47).slice(0, -2)); // Strip JSONP
+        const rows = json.table.rows;
+
+        rows.forEach(row => {
+          const [lang, category, question, answer] = row.c.map(cell => cell?.v || "");
+
+          if (!allData[lang]) allData[lang] = {};
+          if (!allData[lang][category]) allData[lang][category] = [];
+          allData[lang][category].push({ question, answer });
+        });
+
+        // Populate language dropdown
+        const langs = Object.keys(allData);
+        langs.forEach(lang => {
+          const option = document.createElement("option");
+          option.value = lang;
+          option.textContent = lang.toUpperCase();
+          languageSelect.appendChild(option);
+        });
+      });
+
+    languageSelect.addEventListener("change", () => {
+      const lang = languageSelect.value;
+      sectionButtons.innerHTML = "";
+      qaList.innerHTML = "";
+
+      if (lang && allData[lang]) {
+        Object.keys(allData[lang]).forEach(section => {
+          const btn = document.createElement("button");
+          btn.textContent = section.replace(/-/g, " ");
+          btn.className = "section-btn";
+          btn.onclick = () => renderQA(allData[lang][section]);
+          sectionButtons.appendChild(btn);
+        });
+      }
+    });
+
+    function renderQA(qaArray) {
+      qaList.innerHTML = "";
+      qaArray.forEach(item => {
+        const q = document.createElement("h4");
+        q.textContent = "Q: " + item.question;
+        const a = document.createElement("p");
+        a.textContent = "A: " + item.answer;
+        qaList.appendChild(q);
+        qaList.appendChild(a);
+      });
+    }
+  </script>
+
+</body>
+</html>
