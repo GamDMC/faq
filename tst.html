@@ -82,8 +82,9 @@
         const json = JSON.parse(text.substring(47).slice(0, -2)); // Strip JSONP
         const rows = json.table.rows;
 
-        rows.forEach(row => {
-          const [lang, category, question, answer] = row.c.map(cell => cell?.v || "");
+      rows.slice(1).forEach(row => {
+  const [lang, category, question, answer] = row.c.map(cell => cell?.v || "");
+
 
           if (!allData[lang]) allData[lang] = {};
           if (!allData[lang][category]) allData[lang][category] = [];
