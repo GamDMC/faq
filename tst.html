@@ -123,7 +123,10 @@
         const q = document.createElement("h4");
         q.textContent = "Q: " + item.question;
         const a = document.createElement("p");
-        a.innerHTML = "A: " + item.answer.replace("\n", "<br>");
+  // Convert \n to <br> for proper HTML rendering
+    const formattedAnswer = item.answer.replace(/\\n/g, "<br>");
+    a.innerHTML = "A: " + formattedAnswer;
+        
         qaList.appendChild(q);
         qaList.appendChild(a);
       });
